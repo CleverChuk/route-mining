@@ -10,7 +10,7 @@ import requests
 ADDRESS_LOOKUP = "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
 
 HEADERS = {
-    "user-agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36"
+    "user-agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.0.71 Safari/537.0"
 }
 
 
@@ -23,7 +23,7 @@ class AddressValidationResponder(Responder):
             address = addresses[idx]
             # prepare params for API call
             params = {
-                "SingleLine": f"{address.street_number} {address.street_name} {address.apt_number.replace('#','')} {address.city} {address.state} {address.zip}",
+                "SingleLine": f"{address.street_number} {address.street_name} {address.apt_number} {address.city} {address.state} {address.zip}",
                 "f": "json",
                 "outFields": "*",
                 "countryCode": "US"
