@@ -1,12 +1,14 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
 
-from Handler import Handler
 
-class FileHandler(Handler):
+class FileHandler:
+    """
+        abstract class for file handlers
+    """
     def __init__(self):
         self.next_handler = None
 
-    def handle(self, file):
+    def handle(self, filename):
         pass
-
+        

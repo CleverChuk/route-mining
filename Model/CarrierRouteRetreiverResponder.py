@@ -4,7 +4,6 @@
 from typing import List
 from Model.Address import Address
 from Responder import Responder
-import requests
 
 CARRIER_ROUTE_ENDPOINT = "https://tools.usps.com/tools/app/ziplookup/zipByAddress"
 
@@ -14,8 +13,8 @@ HEADERS = {
 
 
 class CarrierRouteRetreiverResponder(Responder):
-    def __init__(self): # noop constructor
-        pass
+    def __init__(self, api_client): # noop constructor
+        self.api_client = api_client
 
     def respond(self, addresses: List[Address]):
         for address in addresses:
@@ -29,7 +28,7 @@ class CarrierRouteRetreiverResponder(Responder):
                 "zip": f"{address.zip}"
             }
             # make API
-            resp_json = requests.post(CARRIER_ROUTE_ENDPOINT, headers=HEADERS, data=data).json()
+            resp_json = self.api_client.post(CARRIER_ROUTE_ENDPOINT, headers=HEADERS, data=data).json()
             # extract the address list
             address_list = resp_json["addressList"]
             # grab the first address 

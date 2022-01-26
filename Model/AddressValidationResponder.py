@@ -6,7 +6,7 @@ from typing import List
 from Model.Address import Address
 from Model.AddressBuilder import AddressBuilder
 from Responder import Responder
-import requests
+
 ADDRESS_LOOKUP = "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
 
 HEADERS = {
@@ -15,8 +15,8 @@ HEADERS = {
 
 
 class AddressValidationResponder(Responder):
-    def __init__(self): # noop constructor
-        pass
+    def __init__(self, api_client): # noop constructor
+        self.api_client = api_client
 
     def respond(self, addresses: List[Address]):
         for idx in range(len(addresses)):
@@ -29,7 +29,7 @@ class AddressValidationResponder(Responder):
                 "countryCode": "US"
             }
             # make API
-            resp_json = requests.get(
+            resp_json = self.api_client.get(
                 ADDRESS_LOOKUP, headers=HEADERS, params=params).json()
             # extract candidate addresses
             candidates = resp_json["candidates"]
@@ -51,6 +51,7 @@ class AddressValidationResponder(Responder):
         address_attributes = address_json["attributes"]
         street_number = address_attributes["AddNum"]
         street_name = f"{address_attributes['StName']} {address_attributes['StType']}"
+        
         apt_number = address_attributes["SubAddr"]
         city = address_attributes["City"]
         state = address_attributes["RegionAbbr"]
