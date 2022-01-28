@@ -5,8 +5,11 @@ from FileHandler import FileHandler
 
 class HandlerChain(FileHandler):
     """
-
+        Handler chain that  prepares and starts execution of the file handlers.
+        The order in which the handlers added doesn't matter since execution terminates
+        with one successful handling otherwise it falls of the tail of the chain
     """
+    
     def __init__(self):
         self.head = None
         self.next_handler = None

@@ -4,7 +4,8 @@
 
 class FileHandler:
     """
-        abstract class for file handlers
+        Abstract class for file handler
+        This provides extensibility for adding different file type handler
     """
     def __init__(self):
         self.next_handler = None

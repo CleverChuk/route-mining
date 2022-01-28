@@ -15,7 +15,10 @@ HEADERS = {
 
 
 class AddressValidationResponder(Responder):
-    def __init__(self, api_client): # noop constructor
+    """
+        A responder that validates each address
+    """
+    def __init__(self, api_client):
         self.api_client = api_client
 
     def respond(self, addresses: List[Address]):
@@ -51,7 +54,7 @@ class AddressValidationResponder(Responder):
         address_attributes = address_json["attributes"]
         street_number = address_attributes["AddNum"]
         street_name = f"{address_attributes['StName']} {address_attributes['StType']}"
-        
+
         apt_number = address_attributes["SubAddr"]
         city = address_attributes["City"]
         state = address_attributes["RegionAbbr"]

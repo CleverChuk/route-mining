@@ -1,19 +1,25 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
 
+from collections import deque
 from Responder import Responder
 
 class ResponderPipeline(Responder):
+    """
+        
+    """
     def __init__(self):
-        self.head = None
-        self.tail = None
+        self.responders = deque()
 
     def add_first(self, responder):
-        pass
+        self.responders.appendleft(responder)
 
     def add_last(self, responder):
-        pass
+        self.responders.append(responder)
 
     def respond(self, addresses):
-        pass
+        for responder in self.responders:
+            response = responder.respond(addresses)
+        
+        return response
 

@@ -13,7 +13,10 @@ HEADERS = {
 
 
 class CarrierRouteRetreiverResponder(Responder):
-    def __init__(self, api_client): # noop constructor
+    """
+        A responder that retrieves the carrier route for each address
+    """
+    def __init__(self, api_client):
         self.api_client = api_client
 
     def respond(self, addresses: List[Address]):

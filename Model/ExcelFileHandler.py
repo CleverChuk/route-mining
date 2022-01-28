@@ -10,6 +10,9 @@ from Model.AddressBuilder import AddressBuilder
 
 
 class ExcelFileHandler(FileHandler):
+    """
+        A file handler for parsing addresses from excel file
+    """
     def __init__(self):
         self.next_handler = None
 

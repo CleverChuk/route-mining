@@ -8,6 +8,9 @@ from Model.Address import Address
 
 
 class AddressBuilder:
+    """
+        Builder for creating an address object
+    """
     def __init__(self):
         self._street_number = None
         self._street_name = None
