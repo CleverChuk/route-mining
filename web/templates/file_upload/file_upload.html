@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}CleverChuk's Route Mining{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form enctype=multipart/form-data method="post">
+    <label for="username">Choose File</label>
+    <input type="file" name="file" id="file" required>
+    <input type="submit" value="Upload">
+  </form>
+{% endblock %}
