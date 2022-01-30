@@ -5,14 +5,60 @@
 {% endblock %}
 
 {% block content %}
-
-<form class="col-lg-6 offset-lg-3 " enctype=multipart/form-data method="post">
-  <label for="formFile" class="form-label">Select file</label>
-  <div class="row form-container">
-    <input type="file" class="form-control" name="file" id="file" accept=".xlsx,xls"required>
-    <span class="input-group-btn">
-      <input type="submit" value="Upload" class="btn btn-primary">
-    </span>
+<div class="container">
+  <div class="row">
+    <form class="col-6 offset-lg-2" enctype=multipart/form-data method="post">
+      <label for="formFile" class="form-label">Select file</label>
+      <div class="row form-container">
+        <input type="file" class="form-control" name="file" id="file" accept=".xlsx,xls" required>
+        <span class="input-group-btn">
+          <input type="submit" value="Upload" class="btn btn-primary">
+        </span>
+      </div>
+    </form>
   </div>
-</form>
+
+  <div class="row">
+    <label for="address-form" class="form-label">Or Enter Addresse(s)</label>
+    <div id="address-form" class="m-2">
+      <div class="input-group input-group-sm m-2">
+        <span class="input-group-text" id="inputGroup-sizing-sm">Address</span>
+        <input type="text" class="form-control w-25" id="address" aria-label="address" value=""
+          aria-describedby="inputGroup-sizing-sm" required>
+      </div>
+      <div class="input-group input-group-sm m-2">
+        <span class="input-group-text" id="inputGroup-sizing-sm">Apt#</span>
+        <input type="text" class="form-control w-25" id="apt-number" aria-label="Apt#" value=""
+          aria-describedby="inputGroup-sizing-sm">
+      </div>
+      <div class="input-group input-group-sm m-2">
+        <span class="input-group-text" id="inputGroup-sizing-sm">City</span>
+        <input type="text" class="form-control w-25" id="city" aria-label="City" value=""
+          aria-describedby="inputGroup-sizing-sm">
+      </div>
+      <div class="input-group input-group-sm m-2">
+        <span class="input-group-text" id="inputGroup-sizing-sm">State</span>
+        <input type="text" class="form-control w-25" id="state" aria-label="State" value=""
+          aria-describedby="inputGroup-sizing-sm" required>
+      </div>
+      <div class="input-group input-group-sm m-2">
+        <span class="input-group-text" id="inputGroup-sizing-sm">Zip</span>
+        <input type="text" class="form-control w-25" id="zip" aria-label="Zip" value=""
+          aria-describedby="inputGroup-sizing-sm">
+      </div>
+      <button class="btn btn-secondary m-2" id="add-btn" value="Add">Add</button>
+    </div>
+  </div>
+
+  <div class="row m-2">
+    <ul id="addresses" class="list-group"></ul>
+    <form method="post" enctype="application/json">
+      <input type="text" name="json" id="json" hidden></input>
+      <input type="submit" id="json-submit" class="btn btn-primary m-2" hidden></input>
+    </form>
+  </div>
+
+
+  <script src="/static/js/upload.js"></script>
+</div>
 {% endblock %}

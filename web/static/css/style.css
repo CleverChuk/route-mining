@@ -15,3 +15,8 @@ h1 {
     display: flex;
     flex-flow: row;
 }
+
+#json-submit, #add-btn{
+    position: relative;
+    left: 90%;
+}

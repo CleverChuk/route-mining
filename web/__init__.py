@@ -17,6 +17,12 @@ def server_error(e):
     """
     return render_template('error/500.html', error=f"{e}"), 500  
 
+def server_error(e):
+    """
+        renders 504 page
+    """
+    return render_template('error/504.html', error=f"{e}"), 504      
+
 def create_app(config=None):
     """
         Application factory method. This creates and initializes the application
