@@ -3,7 +3,7 @@
 import json
 import os
 from typing import List
-from collections import deque
+from collections import defaultdict, deque
 import pandas as pd
 
 from lib.model import Address, AddressBuilder, AddressEncoder
@@ -140,6 +140,10 @@ class ReportGeneratorResponder(Responder):
         with open(file_path, "w") as fp:
             json.dump(addresses, fp, cls=AddressEncoder)
 
+    # def __address_per_route(self, addresses):
+    #     table = defaultdict(int)
+    #     for address in addresses:
+    #         table[address.carrier_route] += 1
     # def export_file(self):
     #     report_path = os.path.join(self.file_dir, self.report_file)
     #     data_path = os.path.join(self.file_dir, self.filename)
