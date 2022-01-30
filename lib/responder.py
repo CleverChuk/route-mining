@@ -40,6 +40,9 @@ class AddressValidationResponder(Responder):
         self.api_client = api_client
 
     def respond(self, addresses: List[Address]):
+        """
+            Validates addresses by calling an API to get the best match address
+        """
         for idx in range(len(addresses)):
             address = addresses[idx]
             # prepare params for API call
@@ -70,6 +73,9 @@ class AddressValidationResponder(Responder):
         return addresses
 
     def validate(self, address: Address, address_json):
+        """
+            Check the user provide address is the same as the best match from api call
+        """
         if not address_json:  # if there's no data, we assume the provided address is correct since there's nothing we can do about it other filtering the address out
             return (True, address)
 
@@ -129,47 +135,49 @@ class CarrierRouteRetreiverResponder(Responder):
 
 
 class ReportGeneratorResponder(Responder):
-    def __init__(self, file_dir="web/files", filename="data.json", report_file="report.xlsx", user_session=None):
+    """
+        A responder that stores the addresses plus the carrier route to
+        the file system
+    """
+    def __init__(self, file_dir="web/files", filename="data.json", user_session=None):
         self.file_dir = file_dir
         self.filename = filename
-        self.report_file = report_file
         self.user_session = user_session
 
     def respond(self, addresses):
+        """
+            Write addresses plus carrier route to the file system
+        """
         file_path = os.path.join(self.file_dir, self.filename)
         with open(file_path, "w") as fp:
-            json.dump(addresses, fp, cls=AddressEncoder)
-
-    # def __address_per_route(self, addresses):
-    #     table = defaultdict(int)
-    #     for address in addresses:
-    #         table[address.carrier_route] += 1
-    # def export_file(self):
-    #     report_path = os.path.join(self.file_dir, self.report_file)
-    #     data_path = os.path.join(self.file_dir, self.filename)
-    #     with open(report_path, "w") as fp:
-    #         with open(data_path, "r") as dfp:
-    #             data = json.load(dfp)
-    #             pd.DataFrame(data).to_excel(fp, "report")
-                
+            json.dump(addresses, fp, cls=AddressEncoder)                
 
 
 
 class ResponderPipeline(Responder):
     """
-
+        A list of Responders which intercepts and processes addresses
     """
 
     def __init__(self):
         self.responders = deque()
 
     def add_first(self, responder):
+        """
+            Add a responder to front of the list
+        """
         self.responders.appendleft(responder)
 
     def add_last(self, responder):
+        """
+            Add a responder to back of the list
+        """
         self.responders.append(responder)
 
     def respond(self, addresses):
+        """
+            Executes the responder pipeline
+        """
         for responder in self.responders:
             response = responder.respond(addresses)
 

@@ -26,18 +26,22 @@ class ExcelFileHandler(FileHandler):
         self.next_handler = None
 
     def handle(self, filename: str):
+        """
+            Create a list of Address from excel file
+        """
         file_extension = os.path.splitext(filename)[1]        
         if file_extension in [".xlsx",".xls"]:
             address_df = pd.read_excel(filename)
-            address_df["apt number"] = address_df["apt number"].fillna(0)
+            address_df["apt_number"] = address_df["apt_number"].fillna(0)
             addresses = []
 
             for _, row in address_df.iterrows():
                 try:
+                    print(row)
                     address = AddressBuilder()\
-                        .street_number(row["street number"])\
-                        .street_name(row["street name"])\
-                        .apt_number(row["apt number"])\
+                        .street_number(row["street_number"])\
+                        .street_name(row["street_name"])\
+                        .apt_number(row["apt_number"])\
                         .city(row["city"])\
                         .state(row["state"])\
                         .zip(row["zip"])\
@@ -55,8 +59,8 @@ class ExcelFileHandler(FileHandler):
 
 class FileHandlerChain(FileHandler):
     """
-        Handler chain that  prepares and starts execution of the file handlers.
-        The order in which the handlers added doesn't matter since execution terminates
+        Handler chain that prepares and starts the execution of file handlers.
+        The order in which the handlers are added doesn't matter since execution terminates
         with one successful handling otherwise it falls of the tail of the chain
     """
     
@@ -64,7 +68,10 @@ class FileHandlerChain(FileHandler):
         self.head = None
         self.next_handler = None
 
-    def addHandler(self, file_handler):
+    def add_handler(self, file_handler):
+        """
+            Add a filehandler to the tail of the chain
+        """
         if not self.head:
             self.head = self.next_handler = file_handler
         else:
@@ -72,12 +79,14 @@ class FileHandlerChain(FileHandler):
             self.next_handler = file_handler
 
     def handle(self, filename):
+        """
+            Executes the handler chain
+        """
         head = self.head
         try:
-            return head.handle(filename)
+            return (None, head.handle(filename))
 
         except Exception as e:
-            print(e)
-            return f"No handler found for {filename}"
+            return (e, f"No handler found for {filename}")
 
         

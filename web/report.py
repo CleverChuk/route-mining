@@ -12,8 +12,9 @@ from lib.responder import ReportGeneratorResponder
 import pandas as pd
 
 
-
 ALLOWED_EXTENSIONS = {"xlsx", "xls"}
+
+report_generator = ReportGeneratorResponder()
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -21,39 +22,65 @@ def allowed_file(filename):
 
 
 report_blue_print = Blueprint('report', __name__, url_prefix='/')
+
+
 @report_blue_print.route('/report/<filename>', methods=('GET', 'POST'))
 def report(filename):
-    addresses = default_file_handler_chain.handle(os.path.join(
-                current_app.config['UPLOAD_FOLDER'], filename))
+    """
+        View for processing uploaded file
+    """
+    # start the file handler chain to extract address from file
+    err, addresses = default_file_handler_chain.handle(os.path.join(
+        current_app.config['UPLOAD_FOLDER'], filename))
 
-    default_responder_pipeline.add_last(ReportGeneratorResponder())
+    if err:
+        raise err
+
+    # report generator handler and start the responder pipeline
+    default_responder_pipeline.add_last(report_generator)
     default_responder_pipeline.respond(addresses)
     return render_template('report/report.html', filename=filename)
 
+
 @report_blue_print.route('/data', methods=('GET',))
 def report_data():
-    with open("web/files/data.json") as fp:
+    """
+        Api endpoint for retrieving the processed data
+    """
+    with open("web/files/data.json") as fp: # open file containing the processed data
         payload = json.load(fp)
-    return jsonify(payload)  
+    return jsonify(payload) # respond with data
+
 
 @report_blue_print.route('/export/<filename>', methods=('GET',))
 def export_report(filename):
+    """
+        View for handling file export
+    """
     with open("web/files/data.json") as fp:
         data = json.load(fp)
 
+    # load report
     df0 = pd.DataFrame(data)
     df1 = pd.DataFrame(__addresses_per_route(data))
-    exported_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], "export.xlsx") 
-    
+    exported_file_path = os.path.join(
+        current_app.config['UPLOAD_FOLDER'], "export.xlsx")
+
+    # write report to excel
     with pd.ExcelWriter(exported_file_path) as writer:
         df0.to_excel(writer, sheet_name="address_with_carrier_route")
         df1.to_excel(writer, sheet_name="address_per_route")
-    return send_file("files/export.xlsx", as_attachment=True, attachment_filename='')
+    
+    # send report for downloading
+    return send_file("files/export.xlsx", as_attachment=True, attachment_filename="-".join([filename, "report"]))
 
 
 def __addresses_per_route(data):
+    """
+        Post process the data to get address per route
+    """
     counter = defaultdict(int)
     for datum in data:
         counter[datum["carrier_route"]] += 1
-    
+
     return [{"Carrier Route": cr, "Address Count": count} for cr, count in counter.items()]

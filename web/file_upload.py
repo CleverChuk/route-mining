@@ -17,6 +17,9 @@ def allowed_file(filename):
 
 @file_upload_blue_print.route('/', methods=('GET', 'POST'))
 def file_upload():
+    """
+        View for handling file uploads
+    """
     if request.method == 'POST':
         file = request.files['file']
         if file.filename == '':
@@ -24,6 +27,7 @@ def file_upload():
             return redirect(request.url)
 
         if file and allowed_file(file.filename):
+            session.pop("__flashes", None)
             filename = secure_filename(file.filename)
             file.save(os.path.join(
                 current_app.config['UPLOAD_FOLDER'], filename))
