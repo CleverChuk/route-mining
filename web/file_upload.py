@@ -32,7 +32,5 @@ def file_upload():
             file.save(os.path.join(
                 current_app.config['UPLOAD_FOLDER'], filename))
             return redirect(url_for('report.report', filename=filename))
-        else:
-            flash(f'Comptible file formats are {ALLOWED_EXTENSIONS}')
 
     return render_template('file_upload/file_upload.html')

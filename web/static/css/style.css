@@ -1,0 +1,17 @@
+.export-btn {
+    position: relative;
+    left: 90%;
+}
+
+html, body, section {
+    margin: auto 5%;
+}
+
+h1 {
+    text-align: center;
+}
+
+.form-container{
+    display: flex;
+    flex-flow: row;
+}

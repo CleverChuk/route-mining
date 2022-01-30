@@ -72,7 +72,7 @@ def export_report(filename):
         df1.to_excel(writer, sheet_name="address_per_route")
     
     # send report for downloading
-    return send_file("files/export.xlsx", as_attachment=True, attachment_filename="-".join([filename, "report"]))
+    return send_file("files/export.xlsx", as_attachment=True, download_name="route_mining_report.xlsx")
 
 
 def __addresses_per_route(data):

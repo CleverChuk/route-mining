@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Page Not Found{% endblock %}
-{% block body %}
+{% block title %}We Fudged Up<{% endblock %}
+{% block content %}
 <h1>We Fudged Up</h1>
 <p>{{error}}</p>
-<a href="{{ url_for('index') }}">go somewhere nice</a>
+<a href="{{ url_for('file_upload.file_upload') }}">go somewhere nice</a>
 {% endblock %}
