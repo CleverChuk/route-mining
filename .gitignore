@@ -1,1 +1,13 @@
-*/__pycache__
+lib/__pycache__/
+web/__pycache__/
+cleverchuk-route-mining-key.json
+files/
+script.sh
+css/
+images/
+js/
+template.html
+route-mining.html
+iso8583.mdj
+credits.txt
+.DS_Store

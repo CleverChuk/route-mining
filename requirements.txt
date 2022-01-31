@@ -1,5 +1,2 @@
-flask
-flask_wtf
-WTForms
-flask-uploads
-openpyxl
+flask==2.0.2
+openpyxl==3.0.9

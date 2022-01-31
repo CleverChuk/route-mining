@@ -1,43 +1,47 @@
 #!/usr/bin/python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 
 import os
+from typing import List
 import pandas as pd
 
-from lib.model import AddressBuilder
+from lib.model import Address, AddressBuilder
+
 
 class FileHandler:
     """
         Abstract class for file handler
         This provides extensibility for adding different file type handler
     """
+
     def __init__(self):
         self.next_handler = None
 
-    def handle(self, filename):
+    def handle(self, filename: str) -> List[Address]:
         pass
-        
+
+
 class ExcelFileHandler(FileHandler):
     """
         A file handler for parsing addresses from excel file
     """
+
     def __init__(self):
         self.next_handler = None
 
-    def handle(self, filename: str):
+    def handle(self, filename: str) -> List[Address]:
         """
             Create a list of Address from excel file
         """
-        file_extension = os.path.splitext(filename)[1]        
-        if file_extension in [".xlsx",".xls"]:
+        file_extension = os.path.splitext(filename)[1]
+        if file_extension in [".xlsx", ".xls"]:
             address_df = pd.read_excel(filename)
             address_df["apt_number"] = address_df["apt_number"].fillna(0)
             addresses = []
 
             for _, row in address_df.iterrows():
                 try:
-                    print(row)
                     address = AddressBuilder()\
                         .street_number(row["street_number"])\
                         .street_name(row["street_name"])\
@@ -50,11 +54,11 @@ class ExcelFileHandler(FileHandler):
 
                 except KeyError as keyError:
                     print(keyError)
+                    raise keyError
 
             return addresses
-        
-        return self.next_handler.handle(filename)
 
+        return self.next_handler.handle(filename)
 
 
 class FileHandlerChain(FileHandler):
@@ -63,12 +67,12 @@ class FileHandlerChain(FileHandler):
         The order in which the handlers are added doesn't matter since execution terminates
         with one successful handling otherwise it falls of the tail of the chain
     """
-    
+
     def __init__(self):
         self.head = None
         self.next_handler = None
 
-    def add_handler(self, file_handler):
+    def add_handler(self, file_handler: FileHandler):
         """
             Add a filehandler to the tail of the chain
         """
@@ -78,7 +82,7 @@ class FileHandlerChain(FileHandler):
             self.next_handler.next_handler = file_handler
             self.next_handler = file_handler
 
-    def handle(self, filename):
+    def handle(self, filename: str) -> List[Address]:
         """
             Executes the handler chain
         """
@@ -88,5 +92,3 @@ class FileHandlerChain(FileHandler):
 
         except Exception as e:
             return (e, f"No handler found for {filename}")
-
-        

@@ -14,15 +14,24 @@ class Address:
         self.carrier_route = carrier_route
 
     def __hash__(self) -> int:
+        """
+            Computes the hash for an address object
+        """
         return hash((self.street_number, self.street_name, self.apt_number, self.city, self.state, self.zip, self.carrier_route))
 
     def __eq__(self, __o: object) -> bool:
+        """
+            Compares two address objects
+        """
         if not isinstance(__o, Address):
             return False
         
         return hash(self) == hash(__o)
 
     def __repr__(self) -> str:
+        """
+            Return the string representation of the object
+        """
         return f"{self.street_number} {self.street_name} {self.apt_number} {self.city} {self.state} {self.zip} {self.carrier_route}"
         
 class AddressBuilder:
@@ -72,5 +81,8 @@ class AddressBuilder:
 
 
 class AddressEncoder(JSONEncoder):
+    """
+        Json Serializer for Address
+    """
     def default(self, address: Address) -> Any:
         return address.__dict__

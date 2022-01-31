@@ -2,19 +2,22 @@ import requests
 HOST_ENDPOINT = "https://tools.usps.com/tools/app/ziplookup/zipByAddress"
 ADDRESS_LOOKUP = "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"
 
-HEADERS = {
-    "user-agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.0.71 Safari/537.0"
+headers = {
+    "user-agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36"
 }
 
 data = {
-    "address1": "500 110th Ave N",
-    "address2": "apt# 1204",
-    "city": "St Petersburg",
+    "companyName": "JP Morgan Chase",
+    "address1": "4915 Independence Pkwy",
+    "address2": "",
+    "city": "Tampa",
     "state": "FL",
+    "urbanCode": "",
+    "zip": 33634
 }
 
 params = {
-    "SingleLine": "500 110th Ave N, apt# 1204, St Petersburg, Fl",
+    "SingleLine": "500 110th Ave N, apt 1204, St Petersburg, Fl",
     "f": "json",
     "outFields": "*",
     "countryCode": "US"

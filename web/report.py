@@ -21,7 +21,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-report_blue_print = Blueprint('report', __name__, url_prefix='/')
+report_blue_print = Blueprint('report', __name__, url_prefix='/') # create a blue print for views in this module
 
 
 @report_blue_print.route('/report/<filename>', methods=('GET', 'POST'))
@@ -34,9 +34,9 @@ def report(filename):
         current_app.config['UPLOAD_FOLDER'], filename))
 
     if err:
-        raise err
+        raise err # raise error if handle chain failed processing the file
 
-    # report generator handler and start the responder pipeline
+    # add report generator responder to the pipeline and start the pipeline
     default_responder_pipeline.add_last(report_generator)
     default_responder_pipeline.respond(addresses)
     return render_template('report/report.html', filename=filename)

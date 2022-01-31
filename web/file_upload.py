@@ -21,16 +21,14 @@ def file_upload():
         View for handling file uploads
     """
     if request.method == 'POST':
-        file = request.files['file']
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
+        file = request.files['file'] # get file object from the request
+        if not file or file.filename == '':
+            return redirect(request.url) # redirect if file is not selected or filename is empty
 
-        if file and allowed_file(file.filename):
-            session.pop("__flashes", None)
+        if allowed_file(file.filename): # validate that selected file is in ALLOWED_EXTENSIONS
             filename = secure_filename(file.filename)
             file.save(os.path.join(
-                current_app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('report.report', filename=filename))
+                current_app.config['UPLOAD_FOLDER'], filename)) # store file in file system
+            return redirect(url_for('report.report', filename=filename)) # redirect to report page
 
-    return render_template('file_upload/file_upload.html')
+    return render_template('file_upload/file_upload.html') # renders file upload page

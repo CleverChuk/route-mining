@@ -27,7 +27,7 @@ class Responder:
     def __init__(self):
         pass
 
-    def respond(self, addresses):
+    def respond(self, addresses: List[Address]) -> List[Address]:
         pass
 
 
@@ -39,7 +39,7 @@ class AddressValidationResponder(Responder):
     def __init__(self, api_client):
         self.api_client = api_client
 
-    def respond(self, addresses: List[Address]):
+    def respond(self, addresses: List[Address]) -> List[Address]:
         """
             Validates addresses by calling an API to get the best match address
         """
@@ -72,7 +72,7 @@ class AddressValidationResponder(Responder):
 
         return addresses
 
-    def validate(self, address: Address, address_json):
+    def validate(self, address: Address, address_json: dict) -> tuple:
         """
             Check the user provide address is the same as the best match from api call
         """
@@ -110,7 +110,7 @@ class CarrierRouteRetreiverResponder(Responder):
     def __init__(self, api_client):
         self.api_client = api_client
 
-    def respond(self, addresses: List[Address]):
+    def respond(self, addresses: List[Address]) -> List[Address]:
         for address in addresses:
             # prepare data for API call
             data = {
@@ -144,7 +144,7 @@ class ReportGeneratorResponder(Responder):
         self.filename = filename
         self.user_session = user_session
 
-    def respond(self, addresses):
+    def respond(self, addresses: List[Address]) -> List[Address]:
         """
             Write addresses plus carrier route to the file system
         """
@@ -174,7 +174,7 @@ class ResponderPipeline(Responder):
         """
         self.responders.append(responder)
 
-    def respond(self, addresses):
+    def respond(self, addresses: List[Address]) -> List[Address]:
         """
             Executes the responder pipeline
         """
