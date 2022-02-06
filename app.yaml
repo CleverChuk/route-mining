@@ -1,1 +1,3 @@
 runtime: python39
+env_variables:
+  GCLOUD_BUCKET: "<REPLACE_ME>"
