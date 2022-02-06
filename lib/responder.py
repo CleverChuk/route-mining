@@ -4,9 +4,7 @@ from io import BytesIO
 import json
 import os
 from typing import List
-from collections import defaultdict, deque
-from numpy import bytes_
-import pandas as pd
+from collections import deque
 
 from lib.file_io import default_file_io_factory
 

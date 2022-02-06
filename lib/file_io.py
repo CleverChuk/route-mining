@@ -1,7 +1,6 @@
 from io import BytesIO
 import os
 
-from matplotlib.pyplot import bar
 
 from google.cloud import storage
 
