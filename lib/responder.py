@@ -141,8 +141,7 @@ class ReportGeneratorResponder(Responder):
         A responder that stores the addresses plus the carrier route to
         the file system
     """
-    def __init__(self, file_dir="web/files", filename="data.json", user_session=None):
-        self.file_dir = file_dir
+    def __init__(self, filename="data.json", user_session=None):
         self.filename = filename
         self.user_session = user_session
 
@@ -154,7 +153,7 @@ class ReportGeneratorResponder(Responder):
         json_string = json.dumps(addresses, cls=AddressEncoder)  
         bytes_io = BytesIO(json_string.encode("utf-8"))
 
-        file_path = os.path.join(self.file_dir, self.filename)
+        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], self.filename)
         file_io = default_file_io_factory.create(current_app.env)  
         file_io.write(bytes_io, file_path)            
 
