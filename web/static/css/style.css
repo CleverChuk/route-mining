@@ -1,22 +1,9 @@
-.export-btn {
-    position: relative;
-    left: 90%;
+html, .container, body, table{
+    background-image: url("assets/texture-1.jpeg");
+    font-family: Helvetica, Arial, sans-serif;
 }
 
-html, body, section {
-    margin: auto 5%;
+.btn{
+    float: right;
 }
 
-h1 {
-    text-align: center;
-}
-
-.form-container{
-    display: flex;
-    flex-flow: row;
-}
-
-#json-submit, #add-btn{
-    position: relative;
-    left: 90%;
-}

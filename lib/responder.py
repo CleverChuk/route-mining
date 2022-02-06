@@ -128,10 +128,12 @@ class CarrierRouteRetreiverResponder(Responder):
                 CARRIER_ROUTE_ENDPOINT, headers=HEADERS, data=data).json()
             # extract the address list
             address_list = resp_json["addressList"]
-            # grab the first address
-            address_json = address_list[0] if len(address_list) else ""
-            # update carrier route
-            address.carrier_route = address_json["carrierRoute"]
+
+            for address_json in address_list:
+                if address_json["carrierRoute"]: # grab the first available carrier route
+                    # update carrier route
+                    address.carrier_route = address_json["carrierRoute"]
+                    break
 
         return addresses
 
@@ -141,6 +143,7 @@ class ReportGeneratorResponder(Responder):
         A responder that stores the addresses plus the carrier route to
         the file system
     """
+
     def __init__(self, filename="data.json", user_session=None):
         self.filename = filename
         self.user_session = user_session
@@ -150,13 +153,13 @@ class ReportGeneratorResponder(Responder):
             Write addresses plus carrier route to the file system
         """
         from flask import current_app
-        json_string = json.dumps(addresses, cls=AddressEncoder)  
+        json_string = json.dumps(addresses, cls=AddressEncoder)
         bytes_io = BytesIO(json_string.encode("utf-8"))
 
-        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], self.filename)
-        file_io = default_file_io_factory.create(current_app.env)  
-        file_io.write(bytes_io, file_path)            
-
+        file_path = os.path.join(
+            current_app.config['UPLOAD_FOLDER'], self.filename)
+        file_io = default_file_io_factory.create(current_app.env)
+        file_io.write(bytes_io, file_path)
 
 
 class ResponderPipeline(Responder):

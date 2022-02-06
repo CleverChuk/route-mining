@@ -1,8 +1,27 @@
 {% extends "base.html" %}
-{% block title %}We Fudged Up<{% endblock %}
+{% block title %}We Fudged Up{% endblock %}
 {% block content %}
-<h1>We Fudged Up</h1>
-<img src="https://http.cat/500"/>
-<p>{{error}}</p>
-<a href="{{ url_for('file_upload.file_upload') }}">go somewhere nice</a>
+<div class="row">
+    <div class="col-md-3"> </div>
+    <div class="col-md-6">
+    </div>
+    <div class="col-md-3">
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3"> </div>
+    <div class="col-md-6">
+        <h2>We Fudged Up</h2>
+        <img src="https://http.cat/500"/>
+    </div>
+    <div class="col-md-3"> </div>
+</div>
+<div class="row">
+    <div class="col-md-3"> </div>
+    <div class="col-md-6">
+        <p>{{error}}</p>
+        <a href="{{ url_for('file_upload.file_upload') }}">go somewhere nice</a>
+    </div>
+    <div class="col-md-3"> </div>
+</div>
 {% endblock %}
