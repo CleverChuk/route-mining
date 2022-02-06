@@ -91,8 +91,6 @@ def export_report():
     # load report
     df0 = pd.DataFrame(data)
     df1 = pd.DataFrame(__addresses_per_route(data))
-    exported_file_path = os.path.join(
-        current_app.config['UPLOAD_FOLDER'], "export.xlsx")
 
     # write report to excel
     file = BytesIO()
@@ -100,9 +98,9 @@ def export_report():
         df0.to_excel(writer, sheet_name="address_with_carrier_route")
         df1.to_excel(writer, sheet_name="address_per_route")
     
-    url = file_io.write(file, exported_file_path)
+    file.seek(0)
     # send report for downloading
-    return send_file(url, as_attachment=True, download_name="route_mining_report.xlsx")
+    return send_file(file, as_attachment=True, download_name="route_mining_report.xlsx")
 
 
 def __addresses_per_route(data):
