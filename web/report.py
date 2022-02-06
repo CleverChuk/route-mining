@@ -74,7 +74,8 @@ def report_data():
         Api endpoint for retrieving the processed data
     """
     file_io = default_file_io_factory.create(current_app.env)
-    payload = json.load(file_io.read("web/files/data.json")) # read file containing the processed data
+    path = os.path.join(current_app.config['UPLOAD_FOLDER'], "data.json")
+    payload = json.load(file_io.read(path)) # read file containing the processed data
     return jsonify(payload)  # respond with data
 
 
