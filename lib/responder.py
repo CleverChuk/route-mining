@@ -1,10 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from io import BytesIO
 import json
 import os
 from typing import List
 from collections import defaultdict, deque
+from numpy import bytes_
 import pandas as pd
+
+from lib.file_io import default_file_io_factory
 
 from lib.model import Address, AddressBuilder, AddressEncoder
 
@@ -148,9 +152,13 @@ class ReportGeneratorResponder(Responder):
         """
             Write addresses plus carrier route to the file system
         """
+        from flask import current_app
+        json_string = json.dumps(addresses, cls=AddressEncoder)  
+        bytes_io = BytesIO(json_string.encode("utf-8"))
+
         file_path = os.path.join(self.file_dir, self.filename)
-        with open(file_path, "w") as fp:
-            json.dump(addresses, fp, cls=AddressEncoder)                
+        file_io = default_file_io_factory.create(current_app.env)  
+        file_io.write(bytes_io, file_path)            
 
 
 

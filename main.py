@@ -1,6 +1,8 @@
+import os
 import web
+
 prod_config = {
-    "UPLOAD_FOLDER":"",
-    "":""
+    "UPLOAD_FOLDER":f"{os.getenv('GCLOUD_BUCKET')}/files",
+    "EXPORT_FILE":f"{os.getenv('GCLOUD_BUCKET')}/files/export.xlsx"
 }
-app = web.create_app()
+app = web.create_app(config=prod_config)

@@ -54,7 +54,7 @@ class GCloudFileIO(FileIO):
         # Construct a client side representation of a blob.
         blob = bucket.blob(path)
         contents: str = blob.download_as_string()
-        return BytesIO(contents.encode("utf-8"))
+        return BytesIO(contents)
 
     def write(self, bytes: BytesIO, path: str) -> str:
         """Uploads a file to the bucket."""
