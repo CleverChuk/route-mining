@@ -1,14 +1,15 @@
-import imp
+from io import BytesIO
 import os
 
 from flask import (
-    Blueprint, flash, redirect, render_template, request, session, url_for, current_app
+    Blueprint, redirect, render_template, request, session, url_for, current_app
 )
 import json
 
 from werkzeug.utils import secure_filename
 
 from lib.model import AddressEncoder
+from lib.file_io import default_file_io_factory
 
 ALLOWED_EXTENSIONS = {"xlsx", "xls"}
 file_upload_blue_print = Blueprint('file_upload', __name__, url_prefix='/')
@@ -25,24 +26,30 @@ def file_upload():
         View for handling file uploads
     """
     if request.method == 'POST':
-        addresses = request.form.get("json") # get json list from the request if user didn't upload a file
+        # get json list from the request if user didn't upload a file
+        addresses = request.form.get("json")
+        file_io = default_file_io_factory.create(current_app.env)
         if addresses:
             filename = "user_provided.json"
-            with open(os.path.join(
-                current_app.config['UPLOAD_FOLDER'], filename), "w") as fp:  # open file for writing
-                json.dump(json.loads(addresses), fp, cls=AddressEncoder)   
-            return redirect(url_for('report.process_immediate', filename=filename)) # redirect to report page
+            fp = BytesIO(addresses.encode('utf-8'))
+            file_io.write(fp, os.path.join(
+                current_app.config['UPLOAD_FOLDER'], filename))
 
-        file = request.files.get('file') # get file object from the request
+            # redirect to report page
+            return redirect(url_for('report.process_immediate', filename=filename))
+
+        file = request.files.get('file')  # get file object from the request
         if not file or file.filename == '':
-            return redirect(request.url) # redirect if file is not selected or filename is empty
+            # redirect if file is not selected or filename is empty
+            return redirect(request.url)
 
-        if allowed_file(file.filename): # validate that selected file is in ALLOWED_EXTENSIONS
+        # validate that selected file is in ALLOWED_EXTENSIONS
+        if allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(
-                current_app.config['UPLOAD_FOLDER'], filename)) # store file in file system
-            return redirect(url_for('report.report', filename=filename)) # redirect to report page
+            file_io.write(file, os.path.join(
+                current_app.config['UPLOAD_FOLDER'], filename))# store file in file system
+            # redirect to report page
+            return redirect(url_for('report.report', filename=filename))
 
-
-
-    return render_template('file_upload/file_upload.html') # renders file upload page
+    # renders file upload page
+    return render_template('file_upload/file_upload.html')

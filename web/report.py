@@ -1,5 +1,6 @@
 from collections import defaultdict
 import imp
+from io import BytesIO
 import json
 import os
 from flask import (
@@ -8,14 +9,13 @@ from flask import (
 
 from werkzeug.utils import secure_filename
 from lib import default_file_handler_chain, default_responder_pipeline
+from lib.file_io import default_file_io_factory
 from lib.model import AddressBuilder
 from lib.responder import ReportGeneratorResponder
 import pandas as pd
 
 
 ALLOWED_EXTENSIONS = {"xlsx", "xls"}
-
-report_generator = ReportGeneratorResponder()
 
 
 def allowed_file(filename):
@@ -40,7 +40,6 @@ def report(filename):
         raise err  # raise error if handle chain failed processing the file
 
     # add report generator responder to the pipeline and start the pipeline
-    default_responder_pipeline.add_last(report_generator)
     default_responder_pipeline.respond(addresses)
     return render_template('report/report.html', filename=filename)
 
@@ -52,8 +51,9 @@ def process_immediate(filename):
     """
     # start the file handler chain to extract address from file
     filename = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-    with open(filename) as fp:
-        addresses = json.load(fp)
+    file_io = default_file_io_factory.create(current_app.env)
+    addresses = json.load(file_io.read(filename))
+        
 
     for idx in range(len(addresses)):
         row = addresses[idx]
@@ -67,7 +67,6 @@ def process_immediate(filename):
             .build()
 
     # add report generator responder to the pipeline and start the pipeline
-    default_responder_pipeline.add_last(report_generator)
     default_responder_pipeline.respond(addresses)
     return render_template('report/report.html', filename=filename)
 
@@ -77,8 +76,8 @@ def report_data():
     """
         Api endpoint for retrieving the processed data
     """
-    with open("web/files/data.json") as fp:  # open file containing the processed data
-        payload = json.load(fp)
+    file_io = default_file_io_factory.create(current_app.env)
+    payload = json.load(file_io.read("web/files/data.json")) # read file containing the processed data
     return jsonify(payload)  # respond with data
 
 
@@ -87,8 +86,10 @@ def export_report():
     """
         View for handling file export
     """
-    with open(os.path.join(current_app.config['UPLOAD_FOLDER'], "data.json")) as fp:
-        data = json.load(fp)
+    
+    file_io = default_file_io_factory.create(current_app.env)
+    path = os.path.join(current_app.config['UPLOAD_FOLDER'], "data.json")
+    data = json.load(file_io.read(path))
 
     # load report
     df0 = pd.DataFrame(data)
@@ -97,12 +98,14 @@ def export_report():
         current_app.config['UPLOAD_FOLDER'], "export.xlsx")
 
     # write report to excel
-    with pd.ExcelWriter(exported_file_path) as writer:
+    file = BytesIO()
+    with pd.ExcelWriter(file) as writer:
         df0.to_excel(writer, sheet_name="address_with_carrier_route")
         df1.to_excel(writer, sheet_name="address_per_route")
-
+    
+    url = file_io.write(file, exported_file_path)
     # send report for downloading
-    return send_file("files/export.xlsx", as_attachment=True, download_name="route_mining_report.xlsx")
+    return send_file(url, as_attachment=True, download_name="route_mining_report.xlsx")
 
 
 def __addresses_per_route(data):

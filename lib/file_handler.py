@@ -1,13 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-
 import os
 from typing import List
 import pandas as pd
 
 from lib.model import Address, AddressBuilder
-
+from lib.file_io import default_file_io_factory
 
 class FileHandler:
     """
@@ -34,9 +33,12 @@ class ExcelFileHandler(FileHandler):
         """
             Create a list of Address from excel file
         """
+        from flask import current_app
+        file_io = default_file_io_factory.create(current_app.env)
         file_extension = os.path.splitext(filename)[1]
+
         if file_extension in [".xlsx", ".xls"]:
-            address_df = pd.read_excel(filename)
+            address_df = pd.read_excel(file_io.read(filename))
             address_df["apt_number"] = address_df["apt_number"].fillna(0)
             addresses = []
 
