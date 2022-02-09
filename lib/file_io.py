@@ -6,10 +6,6 @@ from google.cloud import storage
 
 MAX_CONTENT_LENGTH = 1000 * 1000 * 1000
 
-class AbstractFileIOFactory:
-    def create(self, env: str):
-        raise NotImplementedError
-
 
 class FileIO:
     def read(self, path: str) -> BytesIO:
@@ -17,13 +13,6 @@ class FileIO:
 
     def write(self, bytes: BytesIO, path: str) -> str:
         raise NotImplementedError
-
-
-class EnvironmentFileIOFactory(AbstractFileIOFactory):
-    def create(self, env: str) -> FileIO:
-        if env == "production":
-            return GCloudFileIO(os.getenv("GCLOUD_BUCKET"))
-        return LocalFileIO()
 
 
 class LocalFileIO(FileIO):
@@ -63,7 +52,16 @@ class GCloudFileIO(FileIO):
 
         return blob.public_url
 
+class AbstractFileIOFactory:
+    def create(self, env: str)-> FileIO:
+        raise NotImplementedError
 
+
+class EnvironmentFileIOFactory(AbstractFileIOFactory):
+    def create(self, env: str) -> FileIO:
+        if env == "production":
+            return GCloudFileIO(os.getenv("GCLOUD_BUCKET"))
+        return LocalFileIO()
 
 
 default_file_io_factory = EnvironmentFileIOFactory()

@@ -5,8 +5,9 @@ import os
 from typing import List
 import pandas as pd
 
-from lib.model import Address, AddressBuilder
+from lib.address import Address, AddressBuilder
 from lib.file_io import default_file_io_factory
+
 
 class FileHandler:
     """
@@ -15,10 +16,10 @@ class FileHandler:
     """
 
     def __init__(self):
-        self.next_handler = None
+        self.next_handler: FileHandler = None
 
     def handle(self, filename: str) -> List[Address]:
-        pass
+        raise NotImplementedError
 
 
 class ExcelFileHandler(FileHandler):
@@ -27,7 +28,7 @@ class ExcelFileHandler(FileHandler):
     """
 
     def __init__(self):
-        self.next_handler = None
+        super().__init__()
 
     def handle(self, filename: str) -> List[Address]:
         """
@@ -74,7 +75,7 @@ class FileHandlerChain(FileHandler):
         self.head = None
         self.next_handler = None
 
-    def add_handler(self, file_handler: FileHandler):
+    def add_handler(self, file_handler: FileHandler) -> None:
         """
             Add a filehandler to the tail of the chain
         """

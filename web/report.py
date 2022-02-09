@@ -8,7 +8,7 @@ from flask import (
 
 from lib import default_file_handler_chain, default_responder_pipeline
 from lib.file_io import default_file_io_factory
-from lib.model import AddressBuilder
+from lib.address import AddressBuilder
 import pandas as pd
 
 

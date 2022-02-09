@@ -1,17 +1,17 @@
 
+from __future__ import annotations
 from json import JSONEncoder
 from typing import Any
 
-
 class Address:
-    def __init__(self, street_number,  street_name,  apt_number,  city,  state,  zip,  carrier_route):
-        self.street_number = street_number
-        self.street_name = street_name
-        self.apt_number = apt_number
-        self.city = city
-        self.state = state
-        self.zip = zip
-        self.carrier_route = carrier_route
+    def __init__(self, street_number: str,  street_name: str,  apt_number: str,  city: str,  state: str,  zip: str,  carrier_route: str):
+        self.street_number: str = street_number
+        self.street_name: str = street_name
+        self.apt_number: str = apt_number
+        self.city: str = city
+        self.state: str = state
+        self.zip: str = zip
+        self.carrier_route: str = carrier_route
 
     def __hash__(self) -> int:
         """
@@ -39,40 +39,40 @@ class AddressBuilder:
         Builder for creating an address object
     """
     def __init__(self):
-        self._street_number = None
-        self._street_name = None
-        self._apt_number = None
-        self._city = None
-        self._state = None
-        self._zip = None
-        self._carrier_route = None
+        self._street_number: str = None
+        self._street_name: str = None
+        self._apt_number: str = None
+        self._city: str = None
+        self._state: str = None
+        self._zip: str = None
+        self._carrier_route: str = None
 
     
-    def street_number(self, street_number):
+    def street_number(self, street_number: str) -> AddressBuilder:
         self._street_number = street_number
         return self
 
-    def street_name(self, street_name):
+    def street_name(self, street_name: str) -> AddressBuilder:
         self._street_name = street_name
         return self
 
-    def apt_number(self, apt_number):
+    def apt_number(self, apt_number: str) -> AddressBuilder:
         self._apt_number = apt_number
         return self
 
-    def city(self, city):
+    def city(self, city: str) -> AddressBuilder:
         self._city = city
         return self
 
-    def state(self, state):
+    def state(self, state: str) -> AddressBuilder:
         self._state = state
         return self
 
-    def zip(self, zip):
+    def zip(self, zip: str) -> AddressBuilder:
         self._zip = zip
         return self
 
-    def carrier_route(self, carrier_route):
+    def carrier_route(self, carrier_route: str) -> AddressBuilder:
         self._carrier_route = carrier_route
         return self
 

@@ -3,12 +3,13 @@
 from io import BytesIO
 import json
 import os
-from typing import List
+from typing import Deque, List
 from collections import deque
+from urllib import request
 
 from lib.file_io import default_file_io_factory
 
-from lib.model import Address, AddressBuilder, AddressEncoder
+from lib.address import Address, AddressBuilder, AddressEncoder
 
 
 CARRIER_ROUTE_ENDPOINT = "https://tools.usps.com/tools/app/ziplookup/zipByAddress"
@@ -22,15 +23,12 @@ HEADERS = {
 
 class Responder:
     """
-        Abstract class for responders.
+        Interface for responders.
         This class enable the implementation of intercepting filter pattern
     """
 
-    def __init__(self):
-        pass
-
     def respond(self, addresses: List[Address]) -> List[Address]:
-        pass
+        raise NotImplementedError
 
 
 class AddressValidationResponder(Responder):
@@ -38,8 +36,8 @@ class AddressValidationResponder(Responder):
         A responder that validates each address
     """
 
-    def __init__(self, api_client):
-        self.api_client = api_client
+    def __init__(self, api_client: request):
+        self.api_client: request = api_client
 
     def respond(self, addresses: List[Address]) -> List[Address]:
         """
@@ -109,8 +107,8 @@ class CarrierRouteRetreiverResponder(Responder):
         A responder that retrieves the carrier route for each address
     """
 
-    def __init__(self, api_client):
-        self.api_client = api_client
+    def __init__(self, api_client: request):
+        self.api_client: request = api_client
 
     def respond(self, addresses: List[Address]) -> List[Address]:
         for address in addresses:
@@ -130,7 +128,7 @@ class CarrierRouteRetreiverResponder(Responder):
             address_list = resp_json["addressList"]
 
             for address_json in address_list:
-                if address_json["carrierRoute"]: # grab the first available carrier route
+                if address_json["carrierRoute"]:  # grab the first available carrier route
                     # update carrier route
                     address.carrier_route = address_json["carrierRoute"]
                     break
@@ -144,13 +142,13 @@ class ReportGeneratorResponder(Responder):
         the file system
     """
 
-    def __init__(self, filename="data.json", user_session=None):
+    def __init__(self, filename: str = "data.json", user_session=None):
         self.filename = filename
         self.user_session = user_session
 
     def respond(self, addresses: List[Address]) -> List[Address]:
         """
-            Write addresses plus carrier route to the file system
+            Write addresses plus carrier route to the file store
         """
         from flask import current_app
         json_string = json.dumps(addresses, cls=AddressEncoder)
@@ -161,6 +159,8 @@ class ReportGeneratorResponder(Responder):
         file_io = default_file_io_factory.create(current_app.env)
         file_io.write(bytes_io, file_path)
 
+        return addresses
+
 
 class ResponderPipeline(Responder):
     """
@@ -168,15 +168,15 @@ class ResponderPipeline(Responder):
     """
 
     def __init__(self):
-        self.responders = deque()
+        self.responders: Deque[Responder] = deque()
 
-    def add_first(self, responder):
+    def add_first(self, responder: Responder) -> None:
         """
             Add a responder to front of the list
         """
         self.responders.appendleft(responder)
 
-    def add_last(self, responder):
+    def add_last(self, responder: Responder) -> None:
         """
             Add a responder to back of the list
         """
