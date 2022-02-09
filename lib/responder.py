@@ -10,6 +10,7 @@ from urllib import request
 from lib.file_io import default_file_io_factory
 
 from lib.address import Address, AddressBuilder, AddressEncoder
+from web.file_upload import SESSION_KEY
 
 
 CARRIER_ROUTE_ENDPOINT = "https://tools.usps.com/tools/app/ziplookup/zipByAddress"
@@ -142,20 +143,19 @@ class ReportGeneratorResponder(Responder):
         the file system
     """
 
-    def __init__(self, filename: str = "data.json", user_session=None):
+    def __init__(self, filename: str = "data.json"):
         self.filename = filename
-        self.user_session = user_session
 
     def respond(self, addresses: List[Address]) -> List[Address]:
         """
             Write addresses plus carrier route to the file store
         """
-        from flask import current_app
+        from flask import current_app, session
         json_string = json.dumps(addresses, cls=AddressEncoder)
         bytes_io = BytesIO(json_string.encode("utf-8"))
 
         file_path = os.path.join(
-            current_app.config['UPLOAD_FOLDER'], self.filename)
+            current_app.config['UPLOAD_FOLDER'], session[SESSION_KEY] + self.filename)
         file_io = default_file_io_factory.create(current_app.env)
         file_io.write(bytes_io, file_path)
 

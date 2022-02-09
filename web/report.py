@@ -3,13 +3,15 @@ from io import BytesIO
 import json
 import os
 from flask import (
-    Blueprint, render_template, current_app, jsonify, send_file
+    Blueprint, render_template, current_app, jsonify, send_file, session
 )
 
 from lib import default_file_handler_chain, default_responder_pipeline
 from lib.file_io import default_file_io_factory
 from lib.address import AddressBuilder
 import pandas as pd
+
+from web.file_upload import SESSION_KEY
 
 
 ALLOWED_EXTENSIONS = {"xlsx", "xls"}
@@ -31,7 +33,7 @@ def report(filename):
     """
     # start the file handler chain to extract address from file
     err, addresses = default_file_handler_chain.handle(os.path.join(
-        current_app.config['UPLOAD_FOLDER'], filename))
+        current_app.config['UPLOAD_FOLDER'], session[SESSION_KEY] + filename))
 
     if err:
         raise err  # raise error if handle chain failed processing the file
@@ -47,7 +49,7 @@ def process_immediate(filename):
         View for processing JSON data
     """
     # start the file handler chain to extract address from file
-    filename = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+    filename = os.path.join(current_app.config['UPLOAD_FOLDER'], session[SESSION_KEY] + filename)
     file_io = default_file_io_factory.create(current_app.env)
     addresses = json.load(file_io.read(filename))
         
@@ -74,7 +76,7 @@ def report_data():
         Api endpoint for retrieving the processed data
     """
     file_io = default_file_io_factory.create(current_app.env)
-    path = os.path.join(current_app.config['UPLOAD_FOLDER'], "data.json")
+    path = os.path.join(current_app.config['UPLOAD_FOLDER'], session[SESSION_KEY] + "data.json")
     payload = json.load(file_io.read(path)) # read file containing the processed data
     return jsonify(payload)  # respond with data
 
@@ -86,7 +88,7 @@ def export_report():
     """
     
     file_io = default_file_io_factory.create(current_app.env)
-    path = os.path.join(current_app.config['UPLOAD_FOLDER'], "data.json")
+    path = os.path.join(current_app.config['UPLOAD_FOLDER'], session[SESSION_KEY] + "data.json")
     data = json.load(file_io.read(path))
 
     # load report
