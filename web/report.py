@@ -38,7 +38,7 @@ def report(filename):
     if err:
         raise err  # raise error if handle chain failed processing the file
 
-    # add report generator responder to the pipeline and start the pipeline
+    # start the responder pipeline
     default_responder_pipeline.respond(addresses)
     return render_template('report/report.html', filename=filename)
 
@@ -65,7 +65,7 @@ def process_immediate(filename):
             .zip(row["zip"])\
             .build()
 
-    # add report generator responder to the pipeline and start the pipeline
+    # start the responder pipeline
     default_responder_pipeline.respond(addresses)
     return render_template('report/report.html', filename=filename)
 

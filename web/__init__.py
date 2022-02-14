@@ -1,5 +1,4 @@
 import os
-from random import random
 
 from flask import Flask, render_template
 
@@ -42,7 +41,7 @@ def create_app(config=None):
         app.config['EXPORT_FILE'] = "files/export.xlsx"
 
     app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
-    app.config['SECRET_KEY'] = str(hash(random()))
+    app.config['SECRET_KEY'] = os.getenv("ROUTE_MINING_SECRET_KEY")
 
     # ensure the instance folder exists
     try:
