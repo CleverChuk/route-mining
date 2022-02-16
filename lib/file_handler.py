@@ -40,7 +40,7 @@ class ExcelFileHandler(FileHandler):
 
         if file_extension in [".xlsx", ".xls"]:
             address_df = pd.read_excel(file_io.read(filename))
-            address_df["apt_number"] = address_df["apt_number"].fillna(0)
+            address_df["apt_number"] = address_df["apt_number"].fillna("")
             addresses = []
 
             for _, row in address_df.iterrows():
