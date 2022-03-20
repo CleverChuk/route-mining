@@ -27,7 +27,7 @@ def file_upload():
     """
     if SESSION_KEY not in session:
         key = str(uuid.uuid1())
-        session[SESSION_KEY] = key.split('-')[-1]
+        session[SESSION_KEY] = key.split('-')[-1] # generate session so that we can support concurrent users
 
     if request.method == 'POST':
         # get json list from the request if user didn't upload a file

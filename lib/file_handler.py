@@ -72,8 +72,8 @@ class FileHandlerChain(FileHandler):
     """
 
     def __init__(self):
+        super().__init__()
         self.head = None
-        self.next_handler = None
 
     def add_handler(self, file_handler: FileHandler) -> None:
         """

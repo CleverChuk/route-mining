@@ -61,7 +61,7 @@ class GCloudFileIO(FileIO):
 
         return blob.public_url
 
-class AbstractFileIOFactory:
+class FileIOFactory:
     """
        An abstract factory for creating FileIO objects
     """
@@ -69,9 +69,9 @@ class AbstractFileIOFactory:
         raise NotImplementedError
 
 
-class EnvironmentFileIOFactory(AbstractFileIOFactory):
+class EnvironmentFileIOFactory(FileIOFactory):
     """
-       A concrete implementation of AbstractFileIOFactory for creating FileIO
+       A concrete implementation of FileIOFactory for creating FileIO
        based on environment
     """
     def create(self, env: str) -> FileIO:
