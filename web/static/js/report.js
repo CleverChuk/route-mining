@@ -79,8 +79,60 @@ d3.json("/data")
                     return d.value;
                 });
 
+            draw_pie_chart(Object.values(computed))
             return table;
         };
+
+        function draw_pie_chart(data) {
+
+            var width = 450
+            height = 450
+            margin = 40
+
+            var radius = Math.min(width, height) / 2 - margin
+
+            var svg = d3.select("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+
+            var color = d3.scaleOrdinal()
+                .domain(data)
+                .range(d3.schemeSet2);
+
+            var pie = d3.pie()
+                .value(function (d) { return d.count; })
+
+            var data_ready = pie(data)
+
+            var arcGenerator = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius)
+
+            svg
+                .selectAll('slices')
+                .data(data_ready)
+                .enter()
+                .append('path')
+                .attr('d', arcGenerator)
+                .attr('fill', function (d) { return (color(d.data['carrier_route'])) })
+                .attr("stroke", "black")
+                .style("stroke-width", "2px")
+                .style("opacity", 0.7)
+
+
+            svg
+                .selectAll('slices')
+                .data(data_ready)
+                .enter()
+                .append('text')
+                .text(function (d) { return d.data['carrier_route'] })
+                .attr("transform", function (d) { return "translate(" + arcGenerator.centroid(d) + ")"; })
+                .style("text-anchor", "middle")
+                .style("font-size", 17)
+        }
         tabulate_addr_cr(data, ['street_number', 'street_name', 'apt_number', 'city', 'state', 'zip', 'carrier_route']);
         tabulate_addr_count(data);
     });
