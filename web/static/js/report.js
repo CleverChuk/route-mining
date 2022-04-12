@@ -91,7 +91,7 @@ d3.json("/data")
 
             var radius = Math.min(width, height) / 2 - margin
 
-            var svg = d3.select("svg")
+            var svg = d3.select("#pie-chart")
                 .attr("width", width)
                 .attr("height", height)
                 .append("g")
